@@ -47,28 +47,37 @@ final class Main {
     SavingsAccount myAccount = new SavingsAccount("MJ");
     System.out.println(myAccount.getOwnerName());
 
-    // Deposit
     myAccount.deposit(TEST_VAL_1000);
-    myAccount.deposit(0);
-    myAccount.deposit(TEST_VAL_NEG500);
-    System.out.println(myAccount.getBalance());
-
-    // Withdraw
+    myAccount.deposit(TEST_VAL_1000);
     myAccount.withdraw(TEST_VAL_500);
-    myAccount.withdraw(TEST_VAL_1500);
-    myAccount.withdraw(TEST_VAL_NEG100);
-
-    // Freeze account
-    myAccount.freezeAccount();
-    myAccount.deposit(TEST_VAL_11500);
     myAccount.withdraw(TEST_VAL_500);
 
-    // UnFreeze account
-    myAccount.unfreezeAccount();
-    myAccount.withdraw(TEST_VAL_100);
+    for (Transaction a : myAccount.getTransactionHistory()) {
+      System.out.println(a.toString());
+    }
 
-    System.out.println(myAccount.isFrozen());
-    System.out.println(myAccount.getBalance());
+//    // Deposit
+//    myAccount.deposit(TEST_VAL_1000);
+//    myAccount.deposit(0);
+//    myAccount.deposit(TEST_VAL_NEG500);
+//    System.out.println(myAccount.getBalance());
+//
+//    // Withdraw
+//    myAccount.withdraw(TEST_VAL_500);
+//    myAccount.withdraw(TEST_VAL_1500);
+//    myAccount.withdraw(TEST_VAL_NEG100);
+//
+//    // Freeze account
+//    myAccount.freezeAccount();
+//    myAccount.deposit(TEST_VAL_11500);
+//    myAccount.withdraw(TEST_VAL_500);
+//
+//    // UnFreeze account
+//    myAccount.unfreezeAccount();
+//    myAccount.withdraw(TEST_VAL_100);
+//
+//    System.out.println(myAccount.isFrozen());
+//    System.out.println(myAccount.getBalance());
   }
 
 }

@@ -1,6 +1,7 @@
 package bank;
 //CODE REVIEWER: KYLE ANGEL RAMIREZ
 
+import java.util.ArrayList;
 import java.util.List;
 
 import bank.Exceptions.AccountFrozenException;
@@ -29,6 +30,7 @@ public abstract class AbstractBankAccount implements BankAccount {
   public AbstractBankAccount() {
     this.balance = 0;
     this.isFrozen = false;
+    this.transactionHistory = new ArrayList<Transaction>();
   }
 
   /**
@@ -43,6 +45,9 @@ public abstract class AbstractBankAccount implements BankAccount {
       throw new InvalidAmountException("The deposit amount must be positive.");
     }
     this.balance += amount;
+
+    transactionHistory.add(new Transaction("deposit", amount));
+
     System.out.printf("Deposited: Php %.2f\n", amount);
 
   }
@@ -62,6 +67,9 @@ public abstract class AbstractBankAccount implements BankAccount {
       throw new InvalidAmountException(
           "The withdrawn amount must be positive.");
     }
+
+    transactionHistory.add(new Transaction("withdraw", amount));
+
     this.balance -= amount;
     System.out.printf("Withdrawn: Php %.2f\n", amount);
   }

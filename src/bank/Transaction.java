@@ -51,6 +51,6 @@ public class Transaction {
    * @return string
    */
   public String toString() {
-    return  "Type: " + tType + " Amount: " + tAmount;
+    return  "Type: " + tType + " | Amount: " + tAmount;
   }
 }
