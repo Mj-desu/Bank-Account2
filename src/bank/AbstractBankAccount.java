@@ -7,7 +7,9 @@ import bank.Exceptions.AccountFrozenException;
 import bank.Exceptions.InsufficientFundsException;
 import bank.Exceptions.InvalidAmountException;
 
-
+/*
+ * reviewed by: lady.mendoza
+ */
 public abstract class AbstractBankAccount implements BankAccount {
   /**
    * List of transaction history.
@@ -62,8 +64,7 @@ public abstract class AbstractBankAccount implements BankAccount {
       throw new InsufficientFundsException();
     }
     if (amount < 0) {
-      throw new InvalidAmountException(
-          "The withdraw amount must be positive.");
+      throw new InvalidAmountException("The withdraw amount must be positive.");
     }
 
     this.balance -= amount;
