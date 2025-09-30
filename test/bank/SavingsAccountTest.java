@@ -1,14 +1,20 @@
 package bank;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+
+import bank.Exceptions.AccountFrozenException;
+import bank.Exceptions.InsufficientFundsException;
+import bank.Exceptions.InvalidAmountException;
 
 class SavingsAccountTest {
   /**
@@ -29,6 +35,7 @@ class SavingsAccountTest {
     testAccount = new SavingsAccount("Test");
     outContent.reset();
     System.setOut(new PrintStream(outContent));
+
   }
 
   @Test
@@ -39,7 +46,7 @@ class SavingsAccountTest {
   }
 
   @Test
-  void testShouldBalance() {
+  void testShouldBalance() throws Exception {
     final double expectedOutput = 1000.00;
     double actualOutput;
     testAccount.deposit(expectedOutput);
@@ -49,7 +56,7 @@ class SavingsAccountTest {
 
   @Test
   @Tag("deposit")
-  void testShouldReturnDepositedAmount() {
+  void testShouldReturnDepositedAmount() throws Exception {
     final double expectedOutput = 1000.0;
     double actualOutput;
     testAccount.deposit(expectedOutput);
@@ -59,27 +66,23 @@ class SavingsAccountTest {
 
   @Test
   @Tag("deposit")
-  void testShouldReturnErrorIfAmountIsZero() {
-    String expectedOutput = "The deposit amount must be positive.";
+  void testShouldReturnErrorIfAmountIsZero() throws Exception {
     final double zero = 0;
-    testAccount.deposit(zero);
-
-    assertEquals(expectedOutput, outContent.toString().trim());
+    assertThrows(InvalidAmountException.class, () -> testAccount.deposit(zero));
   }
 
   @Test
   @Tag("deposit")
-  void testShouldReturnErrorIfAmountIsNegative() {
+  void testShouldReturnErrorIfAmountIsNegative() throws Exception {
     final double negVal = -500;
-    String expectedOutput = "The deposit amount must be positive.";
-    testAccount.deposit(negVal);
-    assertEquals(expectedOutput, outContent.toString().trim());
+    assertThrows(InvalidAmountException.class,
+        () -> testAccount.deposit(negVal));
 
   }
 
   @Test
   @Tag("withdraw")
-  void testWithdrawValidAmount() {
+  void testWithdrawValidAmount() throws Exception {
     final double withdrawAmount = 500;
     final double expectedOutput = 500;
     final double actualOutput;
@@ -91,25 +94,23 @@ class SavingsAccountTest {
 
   @Test
   @Tag("withdraw")
-  void testWithdrawInsufficientAmount() {
-    final String expectedOutput = "Deposited: Php 1000.00\n"
-        + "Insufficient balance.";
+  void testWithdrawInsufficientAmount() throws Exception {
     final double withdrawAmount = 1500.0;
     testAccount.deposit(depositAmount);
-    testAccount.withdraw(withdrawAmount);
-    assertEquals(expectedOutput, outContent.toString().trim());
+    assertThrows(InsufficientFundsException.class,
+        () -> testAccount.withdraw(withdrawAmount));
+
   }
 
   @Test
   @Tag("withdraw")
-  void testWithdrawNegativeAmount() {
-    String expectedOutput = "Deposited: Php 1000.00\n"
-        + "The withdrawn amount must be positive.";
+  void testWithdrawNegativeAmount() throws Exception {
+
     final double withdrawAmount = -1500.0;
     testAccount.deposit(depositAmount);
-    testAccount.withdraw(withdrawAmount);
 
-    assertEquals(expectedOutput.trim(), outContent.toString().trim());
+    assertThrows(InvalidAmountException.class,
+        () -> testAccount.withdraw(withdrawAmount));
   }
 
   @Test
@@ -124,35 +125,32 @@ class SavingsAccountTest {
 
   @Test
   @Tag("FreezeAccount")
-  void testDepositWhenFrozen() {
-    String expectedOutput = "Account has been frozen.\r\n"
-        + "Account is frozen. Cannot deposit.";
-    testAccount.freezeAccount();
-    testAccount.deposit(depositAmount);
+  void testDepositWhenFrozen() throws Exception {
 
-    assertEquals(expectedOutput, outContent.toString().trim());
+    testAccount.freezeAccount();
+
+    assertThrows(AccountFrozenException.class,
+        () -> testAccount.deposit(depositAmount));
   }
 
   @Test
   @Tag("FreezeAccount")
-  void testWithdrawWhenFrozen() {
-    String expectedOutput = "Deposited: Php 1000.00\n"
-        + "Account has been frozen.\r\n"
-        + "Account is frozen. Cannot withdraw.";
+  void testWithdrawWhenFrozen() throws Exception {
+
     final double withdrawAmount = 1500.0;
     testAccount.deposit(depositAmount);
     testAccount.freezeAccount();
-    testAccount.withdraw(withdrawAmount);
 
-    assertEquals(expectedOutput, outContent.toString().trim());
+    assertThrows(AccountFrozenException.class,
+        () -> testAccount.withdraw(withdrawAmount));
   }
 
   @Test
   @Tag("FreezeAccount")
-  void testWithdrawWhenUnFrozen() {
-    String expectedOutput = "Deposited: Php 1000.00\n"
+  void testWithdrawWhenUnFrozen() throws Exception {
+    String expectedOutput = "Deposited: Php 1000.0\n"
         + "Account has been frozen.\r\n" + "Account has been unfrozen.\r\n"
-        + "Withdrawn: Php 500.00";
+        + "Withdrawn: Php 500.0";
     final double withdrawAmount = 500.0;
     testAccount.deposit(depositAmount);
     testAccount.freezeAccount();
@@ -160,5 +158,21 @@ class SavingsAccountTest {
     testAccount.withdraw(withdrawAmount);
 
     assertEquals(expectedOutput, outContent.toString().trim());
+  }
+
+  @Test
+  void testGetTransactionHistoryReturnsCorrectContent() throws Exception {
+    final double testVal = 100;
+
+    testAccount.deposit(testVal);
+    testAccount.withdraw(testVal);
+
+    List<Transaction> history = testAccount.getTransactionHistory();
+
+    assertEquals("Deposited", history.get(0).getType());
+    assertEquals(testVal, history.get(0).getAmount());
+
+    assertEquals("Withdrawn", history.get(1).getType());
+    assertEquals(testVal, history.get(1).getAmount());
   }
 }

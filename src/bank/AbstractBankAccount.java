@@ -1,5 +1,4 @@
 package bank;
-//CODE REVIEWER: KYLE ANGEL RAMIREZ
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +7,6 @@ import bank.Exceptions.AccountFrozenException;
 import bank.Exceptions.InsufficientFundsException;
 import bank.Exceptions.InvalidAmountException;
 
-//NO CHECKSTYLE VIOLATIONS. ALL REQUIRED METHODS ARE PRESENT.
 
 public abstract class AbstractBankAccount implements BankAccount {
   /**
@@ -46,9 +44,9 @@ public abstract class AbstractBankAccount implements BankAccount {
     }
     this.balance += amount;
 
-    transactionHistory.add(new Transaction("deposit", amount));
-
-    System.out.printf("Deposited: Php %.2f\n", amount);
+    Transaction current = new Transaction("Deposited", amount);
+    transactionHistory.add(current);
+    System.out.printf(current.toString());
 
   }
 
@@ -65,13 +63,15 @@ public abstract class AbstractBankAccount implements BankAccount {
     }
     if (amount < 0) {
       throw new InvalidAmountException(
-          "The withdrawn amount must be positive.");
+          "The withdraw amount must be positive.");
     }
 
-    transactionHistory.add(new Transaction("withdraw", amount));
-
     this.balance -= amount;
-    System.out.printf("Withdrawn: Php %.2f\n", amount);
+
+    Transaction current = new Transaction("Withdrawn", amount);
+    transactionHistory.add(current);
+
+    System.out.printf(current.toString());
   }
 
   /**
@@ -105,6 +105,7 @@ public abstract class AbstractBankAccount implements BankAccount {
     this.isFrozen = false;
     System.out.println("Account has been unfrozen.");
   }
+
   /**
    * Getter for transaction history.
    * @return transactionHistory

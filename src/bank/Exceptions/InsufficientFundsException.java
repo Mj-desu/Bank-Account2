@@ -7,14 +7,6 @@ public class InsufficientFundsException extends Exception {
   private static final long serialVersionUID = 1L;
 
   /**
-   * Constructor for InsufficientFundsException.
-   * @param msg
-   */
-  public InsufficientFundsException(final String msg) {
-    super(msg);
-  }
-
-  /**
    * No argument constructor.
    */
   public InsufficientFundsException() {
